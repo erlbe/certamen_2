@@ -33,7 +33,7 @@ public class HttpServerConnection {
             return null;
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return "";
         }
     }
 
