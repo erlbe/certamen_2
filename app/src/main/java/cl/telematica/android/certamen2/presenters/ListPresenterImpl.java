@@ -1,15 +1,10 @@
-package cl.telematica.android.certamen2;
+package cl.telematica.android.certamen2.presenters;
 
-import android.app.Fragment;
+import android.app.Activity;
 import android.app.FragmentManager;
+import android.location.LocationManager;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,46 +13,32 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import cl.telematica.android.certamen2.R;
 import cl.telematica.android.certamen2.adapters.GithubRepoAdapter;
 import cl.telematica.android.certamen2.connection.HttpServerConnection;
+import cl.telematica.android.certamen2.fragments.UserNotFoundFragment;
 import cl.telematica.android.certamen2.models.GithubRepo;
+import cl.telematica.android.certamen2.presenters.contract.ListPresenter;
+import cl.telematica.android.certamen2.views.ListView;
 
 /**
- * Created by Erlend on 30.09.2016.
+ * Created by Erlend on 01.11.2016.
  */
-public class ListFragment extends Fragment {
-    String userName;
 
-    private RecyclerView recyclerView;
-    private RecyclerView.LayoutManager layoutManager;
+public class ListPresenterImpl implements ListPresenter{
+    private Activity mContext;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private ListView mListView;
+
     private RecyclerView.Adapter adapter;
-    private TextView textView;
 
-    public ListFragment(){
+    public ListPresenterImpl(Activity mContext, RecyclerView.LayoutManager mLayoutManager, ListView mListView){
+        this.mContext = mContext;
+        this.mLayoutManager = mLayoutManager;
+        this.mListView = mListView;
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        View rootView = inflater.inflate(R.layout.fragment_list, container, false);
-        textView = (TextView)rootView.findViewById(R.id.textView3);
-        textView.setText("Lista de repositorios del usuario " + userName);
-
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
-
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        recyclerView.setHasFixedSize(true);
-
-        layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
-        recyclerView.setLayoutManager(layoutManager);
-
-        /*
-        // Hardcoded data without internet connection.
-        adapter = new GithubRepoAdapter(getRepoListDummyData());
-        recyclerView.setAdapter(adapter);
-        */
-
+    public void inflateList(final RecyclerView recyclerView, final String userName) {
         AsyncTask<Void, Void, String> task = new AsyncTask<Void, Void, String>() {
             @Override
             protected void onPreExecute() {
@@ -82,15 +63,6 @@ public class ListFragment extends Fragment {
             }
         };
         task.execute();
-
-        return rootView;
-    }
-
-    private List<GithubRepo> getRepoListDummyData(){
-        List<GithubRepo> repos = new ArrayList<>();
-        repos.add(new GithubRepo("Number 1", "Descriptioneeien", "Updatednever"));
-        repos.add(new GithubRepo("Number 2", "Descriptioen", "Updated right now"));
-        return repos;
     }
 
     private List<GithubRepo> getRepoList(String result) {
@@ -111,14 +83,10 @@ public class ListFragment extends Fragment {
 
             // Handle if user doesn't exist.
             UserNotFoundFragment userNotFoundFragment = new UserNotFoundFragment();
-            FragmentManager fragmentManager = getFragmentManager();
+            FragmentManager fragmentManager = mContext.getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.activity_main, userNotFoundFragment).commit();
             e.printStackTrace();
             return repos;
         }
-    }
-
-    public void setUsername(String userName){
-        this.userName = userName;
     }
 }

@@ -1,11 +1,10 @@
 package cl.telematica.android.certamen2;
 
 import android.app.FragmentManager;
-import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
+
+import cl.telematica.android.certamen2.fragments.InputFragment;
 
 public class MainActivity extends AppCompatActivity {
 

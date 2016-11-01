@@ -1,4 +1,4 @@
-package cl.telematica.android.certamen2;
+package cl.telematica.android.certamen2.fragments;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -10,15 +10,22 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import cl.telematica.android.certamen2.R;
+import cl.telematica.android.certamen2.presenters.InputPresenterImpl;
+import cl.telematica.android.certamen2.presenters.contract.InputPresenter;
+import cl.telematica.android.certamen2.views.InputView;
+
 
 /**
  * Created by Erlend on 30.09.2016.
  */
 
-public class InputFragment extends Fragment {
+public class InputFragment extends Fragment implements InputView{
 
-    Button button;
-    EditText user;
+    private Button button;
+    private EditText user;
+
+    private InputPresenter mPresenter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -28,15 +35,18 @@ public class InputFragment extends Fragment {
         button = (Button)rootView.findViewById(R.id.button);
         user = (EditText)rootView.findViewById(R.id.editText);
 
+        this.mPresenter = new InputPresenterImpl(getActivity(), this);
+
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                ListFragment listFragment = new ListFragment();
-                listFragment.setUsername(user.getText().toString());
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.activity_main, listFragment).commit();
+                mPresenter.doOnClick();
             }
         });
-
         return rootView;
+    }
+
+    @Override
+    public String getInputText() {
+        return user.getText().toString();
     }
 }
