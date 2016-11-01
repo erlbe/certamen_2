@@ -2,7 +2,6 @@ package cl.telematica.android.certamen2.presenters;
 
 import android.app.Activity;
 import android.app.FragmentManager;
-import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 
@@ -30,8 +29,6 @@ public class ListPresenterImpl implements ListPresenter{
     private RecyclerView.LayoutManager mLayoutManager;
     private ListView mListView;
 
-    private RecyclerView.Adapter adapter;
-
     public ListPresenterImpl(Activity mContext, RecyclerView.LayoutManager mLayoutManager, ListView mListView){
         this.mContext = mContext;
         this.mLayoutManager = mLayoutManager;
@@ -46,8 +43,7 @@ public class ListPresenterImpl implements ListPresenter{
 
             @Override
             protected String doInBackground(Void... voids) {
-                // FIXME: Replace link with: "https://api.github.com/users/"+username+"/repos"
-                String result = new HttpServerConnection().connectToServer("http://www.mocky.io/v2/57eee3822600009324111202", 15000);
+                String result = new HttpServerConnection().connectToServer("https://api.github.com/users/"+userName+"/repos", 15000);
                 return result;
             }
 
@@ -57,7 +53,7 @@ public class ListPresenterImpl implements ListPresenter{
                     System.out.println(result);
 
                     // Specify the adapter
-                    adapter = new GithubRepoAdapter(getRepoList(result), userName);
+                    RecyclerView.Adapter adapter = new GithubRepoAdapter(getRepoList(result), userName);
                     recyclerView.setAdapter(adapter);
                 }
             }
@@ -80,7 +76,7 @@ public class ListPresenterImpl implements ListPresenter{
             }
             return repos;
         } catch (JSONException e) {
-
+            System.out.println();
             // Handle if user doesn't exist.
             UserNotFoundFragment userNotFoundFragment = new UserNotFoundFragment();
             FragmentManager fragmentManager = mContext.getFragmentManager();
